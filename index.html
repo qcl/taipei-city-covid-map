@@ -1,13 +1,92 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-wdith, inital-scale=1" />
+        <title>台北市嚴重特殊傳染性肺炎確診案例居住分佈地圖</title>
+        <style>
+img#map {
+    width: 95vw;
+}
 
+div#map-image {
+    width: 95vw;
+    height: 95vw;
+    background-image: url("./maps/tpe-covid-map-20210530.jpeg");
+    background-size: cover;
+}
+
+div#map {
+    position: relative;
+    top: 28.64583%;
+    left: 4.6875%;
+    height: 64.7916%;
+    width: 91.0416%;
+}
+
+div#me {
+    display: inline;
+    opacity: 0;
+    position: relative;
+}
+        </style>
     </head>
     <body>
         <h1>台北市嚴重特殊傳染性肺炎確診案例居住分佈地圖</h1>
-        <div>
-            <!-- insert the map here -->
+        <p id="message"</p>
+        <div id="map-image">
+            <div id="map">
+                <div id="me">😷</div>
+            </div>
         </div>
 
+<script>
+let messageElement = document.querySelector("p#message");
+let meDiv = document.querySelector("div#me");
+let mapDiv = document.querySelector("div#map");
+
+let minLat = 24.975049;
+let maxLat = 25.157356;
+let minLng = 121.430959;
+let maxLng = 121.715074;
+
+if (!navigator.geolocation) {
+    messageElement.innerText = "您的瀏覽器不支援定位功能。";
+} else {
+    messageElement.innerText = "正在嘗試獲取您的位置。";
+    navigator.geolocation.getCurrentPosition((position) => {
+        if (position.coords) {
+            let lat = position.coords.latitude;
+            let lng = position.coords.longitude;
+
+            if (lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng) {
+                messageElement.innerText = "您的位置位於地圖內，請查看地圖內的「😷」位置。";
+
+                let w = mapDiv.offsetWidth;
+                let h = mapDiv.offsetHeight;
+                let y = h * (1.0 - ((lat - minLat)/(maxLat - minLat)));
+                let x = w * (lng - minLng)/(maxLng - minLng);
+
+                meDiv.style.opacity = 1;
+                let meW = meDiv.offsetWidth;
+                let meH = meDiv.offsetHeight;
+
+                x = Math.max(x - (meW/2.0), 0);
+                y = Math.max(y - (meH/2.0), 0);
+ 
+                meDiv.style.top = `${y}px`;
+                meDiv.style.left = `${x}px`;
+
+            } else {
+                messageElement.innerText = "您的位置並不在地圖範圍內。";
+            }
+        } else {
+            messageElement.innerText = "很抱歉無法取得您的位置。";
+        }
+    }, () => {
+        messageElement.innerText = "很抱歉無法取得您的位置。";
+    });
+}
+</script>
     </body>
 </html>
