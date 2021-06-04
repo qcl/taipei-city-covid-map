@@ -59,23 +59,21 @@ if (!navigator.geolocation) {
             let lat = position.coords.latitude;
             let lng = position.coords.longitude;
 
-            if (lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng) {
+            if (lat > minLat && lat < maxLat && lng > minLng && lng < maxLng) {
                 messageElement.innerText = "您的位置位於地圖內，請查看地圖內的「😷」位置。";
 
-                let w = mapDiv.offsetWidth;
-                let h = mapDiv.offsetHeight;
-                let y = h * (1.0 - ((lat - minLat)/(maxLat - minLat)));
-                let x = w * (lng - minLng)/(maxLng - minLng);
+                let y = 1.0 - ((lat - minLat)/(maxLat - minLat));
+                let x = (lng - minLng)/(maxLng - minLng);
 
-                meDiv.style.opacity = 1;
-                let meW = meDiv.offsetWidth;
-                let meH = meDiv.offsetHeight;
+                meDiv.style.opacity = 1;    // make it visiable
+                let meW = meDiv.offsetWidth / mapDiv.offsetWidth;
+                let meH = meDiv.offsetHeight / mapDiv.offsetHeight;
 
-                x = Math.max(x - (meW/2.0), 0);
-                y = Math.max(y - (meH/2.0), 0);
+                x = Math.max(x - (meW/2.0), 0.0);
+                y = Math.max(y - (meH/2.0), 0.0);
  
-                meDiv.style.top = `${y}px`;
-                meDiv.style.left = `${x}px`;
+                meDiv.style.top = `${100 * y}%`;
+                meDiv.style.left = `${100 * x}%`;
 
             } else {
                 messageElement.innerText = "您的位置並不在地圖範圍內。";
